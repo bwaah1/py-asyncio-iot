@@ -12,7 +12,7 @@ def generate_id(length: int = 8) -> str:
 
 class Device(Protocol):
     async def connect(self) -> None:
-        ...  # Ellipsis - similar to "pass", but sometimes has different meaning
+        ...
 
     async def disconnect(self) -> None:
         ...
@@ -38,8 +38,11 @@ class IOTService:
     async def get_device(self, device_id: str) -> Device:
         return self.devices[device_id]
 
-    async def run_program(self, program):
-        tasks = [self.devices[msg.device_id].send_message(msg.msg_type, msg.data) for msg in program]
+    async def run_program(self, program: list[Message]) -> None:
+        tasks = [
+            self.devices[msg.device_id].send_message(msg.msg_type, msg.data)
+            for msg in program
+        ]
         await asyncio.gather(*tasks)
 
     async def send_msg(self, msg: Message) -> None:
