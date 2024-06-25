@@ -12,21 +12,15 @@ async def main() -> None:
     hue_light = HueLightDevice()
     speaker = SmartSpeakerDevice()
     toilet = SmartToiletDevice()
-    tasks = [
-        asyncio.create_task(service.register_device(hue_light)),
-        asyncio.create_task(service.register_device(speaker)),
-        asyncio.create_task(service.register_device(toilet)),
-    ]
-    hue_light_id, speaker_id, toilet_id = await asyncio.gather(*tasks)
+
+    hue_light_id = await service.register_device(hue_light)
+    speaker_id = await service.register_device(speaker)
+    toilet_id = await service.register_device(toilet)
 
     wake_up_program = [
         Message(hue_light_id, MessageType.SWITCH_ON),
         Message(speaker_id, MessageType.SWITCH_ON),
-        Message(
-            speaker_id,
-            MessageType.PLAY_SONG,
-            "Rick Astley - Never Gonna Give You Up"
-        ),
+        Message(speaker_id, MessageType.PLAY_SONG, "Rick Astley - Never Gonna Give You Up"),
     ]
 
     sleep_program = [
